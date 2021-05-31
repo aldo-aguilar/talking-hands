@@ -29,15 +29,6 @@ graph_landmarks = [ 8, 12, 16, 20]
 landmark_colors = [[0, 0, 0] for _ in range(len(graph_landmarks))] 
 landmark_enabled = [1 for _ in range(len(graph_landmarks))]
 
-# prior coordinates 
-prior_cords = [[],[]]
-
-# tracer list of prior cords
-tracer = []
-
-# rate at which hand is moving
-roc = [0, 0]
-
 # output mode and cooresponding output values
 output_mode = 0
 # 2 ^ 4 possible values
@@ -96,28 +87,6 @@ with mp_hands.Hands(
           if i in graph_landmarks:
             cv2.circle(image, (cur_x, cur_y), radius=1, color=(225, 0, 100), thickness=10)
         
-        # tracer effect
-        # for prior in tracer:
-        #   for cord in prior:
-        #     cv2.circle(image, cord.cord, radius=1, color=colors[color_counter], thickness=10)
-        #     color_counter += 1
-        #     color_counter = color_counter % len(colors)
-
-        # draw distance bar
-        # cv2.line(image,cur_hand_cords[4].cord, cur_hand_cords[8].cord, cur_color, 10)
-        # dist = np.linalg.norm(cur_hand_cords[4].cord - cur_hand_cords[8].cord)
-        # cv2.putText(image, f'Dist: {dist}',(10,400), font, 1,(255,255,255),2,cv2.LINE_AA)
-
-        # distance bar cycle through patterns
-        # if dist < 20:
-        #   print(f'change: {color_counter}')
-        #   color_counter += 1
-        #   color_counter = color_counter % len(colors)
-        
-        # change distance bar randomly
-        # if dist < 50:
-        #   print(f'change: {color_counter}')
-        #   cur_color = (np.random.randint(255), np.random.randint(255), np.random.randint(255))
         if hand_num == 0:
           for i, landmark in enumerate(graph_landmarks):
             dist = np.linalg.norm(cur_hand_cords[4].cord - cur_hand_cords[landmark].cord)
@@ -148,25 +117,9 @@ with mp_hands.Hands(
               output_mode_colors[i] = [0, 0, 0]
               output_mode = 0
 
-
-          
-
-        if prior_cords[hand_num]:
-          del_x = cur_hand_cords[0].x - prior_cords[hand_num][0].x 
-          del_y = cur_hand_cords[0].y - prior_cords[hand_num][0].y
-          roc[hand_num] = abs(del_y / del_x) if del_x and del_y else 0
-          #cv2.putText(image, f'Roc: {roc[hand_num]}',(90,50), font, 1, (255,255,255),2,cv2.LINE_AA)
-
         dist = np.linalg.norm(cur_hand_cords[4].cord - cur_hand_cords[8].cord)
         
-        prior_cords[hand_num] = cur_hand_cords
         
-        #tracer.append(cur_hand_cords)
-
-        #if len(tracer) == 15:
-        #  tracer = tracer[1:]
-
-        # mp_drawing.draw_landmarks(image, hand_landmarks, mp_hands.HAND_CONNECTIONS)
 
 
     cv2.imshow('MediaPipe Hands', image)
